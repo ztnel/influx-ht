@@ -2,15 +2,15 @@
 	"meta": {
 	  "version": "1",
 	  "type": "dashboard",
-	  "name": "I2S Demo-Template",
-	  "description": "template created from dashboard: I2S Demo"
+	  "name": "Demo-Template",
+	  "description": "template created from dashboard: Demo"
 	},
 	"content": {
 	  "data": {
 		"type": "dashboard",
 		"attributes": {
-		  "name": "I2S Demo",
-		  "description": "Demo of I2S data aggregation and query"
+		  "name": "Demo",
+		  "description": "Demo of data aggregation and query"
 		},
 		"relationships": {
 		  "label": {
