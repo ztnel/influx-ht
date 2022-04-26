@@ -16,7 +16,15 @@ docker-compose up
 
 Once the services spin up head to http://localhost:8086 on your local browser to login to the influx client. The username and password for this instance is defined [here](.env) feel free to change any of the default influx config I have set.
 
-### Teardown
+I have supplied an influx dashboard for viewing the datastream [here](/etc/demo-dashboard.json). Simply select the import dashboard option on the client web interface and load in the supplied json. Unfortunately influx does not allow us to mount the dashboard directly so this step will remain a manual one.
+
+Once the dashboard is loaded you should see a batch read of data:
+![dashboard](docs/dash.png)
+
+I have written a simple python module which simulates an incoming high bandwidth data stream. I have packaged the module into a docker service named `influxclient` which networks with the active `influx` database instance. It performs a batch write to the database as soon as the buffer is filled.
+
+
+
 To teardown the services and resources:
 ```bash
 docker-compose down --rmi all
