@@ -8,5 +8,8 @@ Influx DB portal
 import logging
 
 
-# TODO: add proper logging config
-logging.basicConfig(level=logging.DEBUG)
+# bind logging to config file
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(threadName)s %(name)s %(message)s"
+)

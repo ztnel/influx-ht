@@ -1,4 +1,3 @@
-*
-!.gitignore
-!README.md
-!demo-dashboard.json
+engine
+*.bolt
+*.sqlite
