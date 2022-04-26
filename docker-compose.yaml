@@ -10,9 +10,7 @@ services:
     image: influxdb:latest
     volumes:
       # Mount for influxdb data directory and configuration
-      - ./mnt/data:/var/lib/influxdb2:rw
-      - ./mnt/config:/root/influxdb:rw
-
+      - ./mnt:/var/lib/influxdb2:rw
     environment: 
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=${USERNAME}
@@ -20,6 +18,7 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=${ORG}
       - DOCKER_INFLUXDB_INIT_BUCKET=${BUCKET}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${TOKEN}
+      - DOCKER_INFLUXDB_INIT_RETENTION=1h0m0s
     ports:
       - 8086:8086
     networks:

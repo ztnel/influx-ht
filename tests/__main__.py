@@ -64,7 +64,6 @@ wo = WriteOptions(
     jitter_interval=0,          # no jitter for simplicity
     retry_interval=3000
 )
-
 buffer = []
 timestamp = time.time_ns()
 batch_ts_start = timestamp - \
