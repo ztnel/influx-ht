@@ -1,0 +1,40 @@
+---
+version: "3"
+
+networks:
+  influx:
+
+services:
+  influxdb:
+    container_name: influx
+    image: influxdb:latest
+    volumes:
+      # Mount for influxdb data directory and configuration
+      - ./mnt:/var/lib/influxdb2:rw
+    environment: 
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=adminpassword
+      - DOCKER_INFLUXDB_INIT_ORG=gbatteries
+      - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=mytoken
+    ports:
+      - 8086:8086
+    networks:
+      - influx
+
+  influxclient:
+    container_name: influxclient
+    depends_on:
+      - influxdb
+    build:
+      context: .
+    volumes:
+      - .:/app
+    environment:
+      - INFLUXDB_ADDR=http://influx:8086
+      - INFLUXDB_TOKEN=mytoken
+      - INFLUXDB_ORG=gbatteries
+      - INFLUXDB_BUCKET=telemetry
+    networks:
+      - influx
