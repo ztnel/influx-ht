@@ -20,11 +20,19 @@
 			"data": [
 			  {
 				"type": "cell",
-				"id": "094599a6d1ba2000"
+				"id": "0945eede0470e000"
 			  },
 			  {
 				"type": "cell",
-				"id": "09459d12ee3a2000"
+				"id": "0945eede0730e000"
+			  },
+			  {
+				"type": "cell",
+				"id": "094ed6ae46c1f000"
+			  },
+			  {
+				"type": "cell",
+				"id": "094edb6d5cc1f000"
 			  }
 			]
 		  },
@@ -35,51 +43,87 @@
 	  },
 	  "included": [
 		{
-		  "id": "094599a6d1ba2000",
+		  "id": "0945eede0470e000",
 		  "type": "cell",
 		  "attributes": {
 			"x": 0,
 			"y": 0,
-			"w": 12,
+			"w": 7,
 			"h": 7
 		  },
 		  "relationships": {
 			"view": {
 			  "data": {
 				"type": "view",
-				"id": "094599a6d1ba2000"
+				"id": "0945eede0470e000"
 			  }
 			}
 		  }
 		},
 		{
-		  "id": "09459d12ee3a2000",
+		  "id": "0945eede0730e000",
 		  "type": "cell",
 		  "attributes": {
 			"x": 0,
 			"y": 7,
-			"w": 12,
+			"w": 7,
 			"h": 7
 		  },
 		  "relationships": {
 			"view": {
 			  "data": {
 				"type": "view",
-				"id": "09459d12ee3a2000"
+				"id": "0945eede0730e000"
+			  }
+			}
+		  }
+		},
+		{
+		  "id": "094ed6ae46c1f000",
+		  "type": "cell",
+		  "attributes": {
+			"x": 7,
+			"y": 0,
+			"w": 5,
+			"h": 7
+		  },
+		  "relationships": {
+			"view": {
+			  "data": {
+				"type": "view",
+				"id": "094ed6ae46c1f000"
+			  }
+			}
+		  }
+		},
+		{
+		  "id": "094edb6d5cc1f000",
+		  "type": "cell",
+		  "attributes": {
+			"x": 7,
+			"y": 7,
+			"w": 5,
+			"h": 7
+		  },
+		  "relationships": {
+			"view": {
+			  "data": {
+				"type": "view",
+				"id": "094edb6d5cc1f000"
 			  }
 			}
 		  }
 		},
 		{
 		  "type": "view",
-		  "id": "094599a6d1ba2000",
+		  "id": "0945eede0470e000",
 		  "attributes": {
 			"name": "NRT Stream",
 			"properties": {
 			  "shape": "chronograf-v2",
 			  "queries": [
 				{
-				  "text": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"test\")\n  |> filter(fn: (r) => r[\"_field\"] == \"c\" or r[\"_field\"] == \"v\")",
+				  "text": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"test\" and r[\"_field\"] == \"c\" or r[\"_field\"] == \"v\")",
 				  "editMode": "advanced",
 				  "name": "",
 				  "builderConfig": {
@@ -185,7 +229,7 @@
 		},
 		{
 		  "type": "view",
-		  "id": "09459d12ee3a2000",
+		  "id": "0945eede0730e000",
 		  "attributes": {
 			"name": "Tablular",
 			"properties": {
@@ -193,7 +237,7 @@
 			  "type": "table",
 			  "queries": [
 				{
-				  "text": "\nfrom(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"test\")\n  |> filter(fn: (r) => r[\"_field\"] == \"c\" or r[\"_field\"] == \"v\")",
+				  "text": "\nfrom(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"test\")\n  |> filter(fn: (r) => r[\"_field\"] == \"c\" or r[\"_field\"] == \"v\" or r[\"_field\"] == \"capacity\")",
 				  "editMode": "advanced",
 				  "name": "",
 				  "builderConfig": {
@@ -277,8 +321,234 @@
 			  "showNoteWhenEmpty": false
 			}
 		  }
+		},
+		{
+		  "type": "view",
+		  "id": "094ed6ae46c1f000",
+		  "attributes": {
+			"name": "Capacity",
+			"properties": {
+			  "shape": "chronograf-v2",
+			  "queries": [
+				{
+				  "text": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"test\")\n  |> filter(fn: (r) => r[\"_field\"] == \"capacity\")",
+				  "editMode": "advanced",
+				  "name": "",
+				  "builderConfig": {
+					"buckets": [],
+					"tags": [
+					  {
+						"key": "_measurement",
+						"values": [],
+						"aggregateFunctionType": "filter"
+					  }
+					],
+					"functions": [
+					  {
+						"name": "mean"
+					  }
+					],
+					"aggregateWindow": {
+					  "period": "auto",
+					  "fillValues": false
+					}
+				  }
+				}
+			  ],
+			  "axes": {
+				"x": {
+				  "bounds": [
+					"",
+					""
+				  ],
+				  "label": "",
+				  "prefix": "",
+				  "suffix": "",
+				  "base": "10",
+				  "scale": "linear"
+				},
+				"y": {
+				  "bounds": [
+					"",
+					""
+				  ],
+				  "label": "Capacity",
+				  "prefix": "",
+				  "suffix": "",
+				  "base": "10",
+				  "scale": "linear"
+				}
+			  },
+			  "type": "xy",
+			  "staticLegend": {
+				"colorizeRows": true,
+				"heightRatio": 0.08454545454545455,
+				"show": true,
+				"opacity": 1,
+				"orientationThreshold": 100000000,
+				"widthRatio": 1
+			  },
+			  "geom": "line",
+			  "colors": [
+				{
+				  "id": "af0242f1-e55c-4c1b-bd0c-434e87a2069a",
+				  "type": "scale",
+				  "hex": "#8F8AF4",
+				  "name": "Do Androids Dream of Electric Sheep?",
+				  "value": 0
+				},
+				{
+				  "id": "d0dd7f4a-e691-4038-97b0-0ab67a091c3d",
+				  "type": "scale",
+				  "hex": "#A51414",
+				  "name": "Do Androids Dream of Electric Sheep?",
+				  "value": 0
+				},
+				{
+				  "id": "d7b8c9cc-60d9-48b3-8f6b-255574b6b368",
+				  "type": "scale",
+				  "hex": "#F4CF31",
+				  "name": "Do Androids Dream of Electric Sheep?",
+				  "value": 0
+				}
+			  ],
+			  "note": "",
+			  "showNoteWhenEmpty": false,
+			  "xColumn": "",
+			  "generateXAxisTicks": [],
+			  "xTotalTicks": 0,
+			  "xTickStart": 0,
+			  "xTickStep": 0,
+			  "yColumn": "",
+			  "generateYAxisTicks": [],
+			  "yTotalTicks": 0,
+			  "yTickStart": 0,
+			  "yTickStep": 0,
+			  "shadeBelow": true,
+			  "position": "overlaid",
+			  "timeFormat": "HH:mm:ss.sss",
+			  "hoverDimension": "auto",
+			  "legendColorizeRows": true,
+			  "legendHide": false,
+			  "legendOpacity": 1,
+			  "legendOrientationThreshold": 100000000
+			}
+		  }
+		},
+		{
+		  "type": "view",
+		  "id": "094edb6d5cc1f000",
+		  "attributes": {
+			"name": "MRS",
+			"properties": {
+			  "shape": "chronograf-v2",
+			  "queries": [
+				{
+				  "text": "from(bucket: \"telemetry\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"test\" and r[\"_field\"] == \"mrs\")",
+				  "editMode": "advanced",
+				  "name": "",
+				  "builderConfig": {
+					"buckets": [],
+					"tags": [
+					  {
+						"key": "_measurement",
+						"values": [],
+						"aggregateFunctionType": "filter"
+					  }
+					],
+					"functions": [
+					  {
+						"name": "mean"
+					  }
+					],
+					"aggregateWindow": {
+					  "period": "auto",
+					  "fillValues": false
+					}
+				  }
+				}
+			  ],
+			  "axes": {
+				"x": {
+				  "bounds": [
+					"",
+					""
+				  ],
+				  "label": "",
+				  "prefix": "",
+				  "suffix": "",
+				  "base": "10",
+				  "scale": "linear"
+				},
+				"y": {
+				  "bounds": [
+					"",
+					""
+				  ],
+				  "label": "Voltage",
+				  "prefix": "",
+				  "suffix": "",
+				  "base": "10",
+				  "scale": "linear"
+				}
+			  },
+			  "type": "xy",
+			  "staticLegend": {
+				"colorizeRows": true,
+				"heightRatio": 0.1390909090909091,
+				"show": true,
+				"opacity": 1,
+				"orientationThreshold": 100000000,
+				"widthRatio": 1
+			  },
+			  "geom": "line",
+			  "colors": [
+				{
+				  "id": "add512d7-116d-4100-88d2-c77f8bb3a9bb",
+				  "type": "scale",
+				  "hex": "#DA6FF1",
+				  "name": "Ectoplasm",
+				  "value": 0
+				},
+				{
+				  "id": "118ffb84-9b71-4674-998d-dbf52e73a11d",
+				  "type": "scale",
+				  "hex": "#00717A",
+				  "name": "Ectoplasm",
+				  "value": 0
+				},
+				{
+				  "id": "50a20c16-81c4-4f23-ac11-b0df67dfe1dc",
+				  "type": "scale",
+				  "hex": "#ACFF76",
+				  "name": "Ectoplasm",
+				  "value": 0
+				}
+			  ],
+			  "note": "",
+			  "showNoteWhenEmpty": false,
+			  "xColumn": "",
+			  "generateXAxisTicks": [],
+			  "xTotalTicks": 0,
+			  "xTickStart": 0,
+			  "xTickStep": 0,
+			  "yColumn": "",
+			  "generateYAxisTicks": [],
+			  "yTotalTicks": 0,
+			  "yTickStart": 0,
+			  "yTickStep": 0,
+			  "shadeBelow": true,
+			  "position": "overlaid",
+			  "timeFormat": "hh:mm:ss.sss a",
+			  "hoverDimension": "auto",
+			  "legendColorizeRows": true,
+			  "legendHide": false,
+			  "legendOpacity": 1,
+			  "legendOrientationThreshold": 100000000
+			}
+		  }
 		}
 	  ]
 	},
 	"labels": []
-}
+  }

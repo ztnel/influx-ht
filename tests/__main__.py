@@ -9,8 +9,12 @@ from influxdb_client import InfluxDBClient, WriteOptions
 from influxdb_client.client.write_api import WriteType
 from influxdb_client.domain.write_precision import WritePrecision
 
-_log = logging.getLogger(__name__)
-q = queue.Queue()
+
+class TransferInfo:
+    LATENCY = 1_000
+    BATCH_SIZE = 1
+    SAMPLE_RATE = 1  # samples per second
+    SAMPLE_SPACING = 1 / SAMPLE_RATE
 
 
 def producer():
@@ -18,7 +22,7 @@ def producer():
     c = 0
     v = 0
     while True:
-        time.sleep(5.4e-6)
+        time.sleep(TransferInfo.SAMPLE_SPACING)
         vnoise = random.uniform(-1, 1)
         cnoise = random.uniform(-1, 1)
         c += cnoise
@@ -28,11 +32,15 @@ def producer():
         q.put(write_str)
 
 
-class TransferInfo:
-    LATENCY = 1_000
-    BATCH_SIZE = 5_000
-    SAMPLE_RATE = 185_000
+def micros() -> int:
+    return time.time_ns() // 1000
 
+
+_log = logging.getLogger(__name__)
+q = queue.Queue()
+index = 0
+buffer = []
+stream_start_ts = micros()
 
 # Read environment
 influxdb_addr = os.environ['INFLUXDB_ADDR']
@@ -60,37 +68,20 @@ threading.Thread(target=producer, daemon=True).start()
 # Write options uses batching mode by default NOTE: all time units in ms
 wo = WriteOptions(
     write_type=WriteType.asynchronous,
-    batch_size=5000,            # optimal batch size for influx 2.x
-    flush_interval=1000,        # flush the buffer every second if buffer is not filled
-    jitter_interval=0,          # no jitter for simplicity
+    batch_size=TransferInfo.BATCH_SIZE,       # optimal batch size for influx 2.x
+    flush_interval=1000,                      # flush the buffer every second if buffer is not filled
+    jitter_interval=0,                        # no jitter for simplicity
     retry_interval=3000
 )
 
-
-def sec_to_ns(ts) -> int:
-    return int(ts * 1e9)
-
-
-def sec_to_us(ts) -> int:
-    return int(ts * 1e6)
-
-
-buffer = []
-sample_spacing = 1 / TransferInfo.SAMPLE_RATE
-batch_sample_time = sample_spacing * TransferInfo.BATCH_SIZE
-_log.info("Fixed Batch Sample Time: %ss", batch_sample_time)
-_log.info("Sample Spacing: %ss", sample_spacing)
+_log.info("Stream start timestamp: %s", stream_start_ts)
 while True:
-    timestamp = time.time_ns()
-    _log.info("Now : %s", timestamp)
-    batch_ts_start = timestamp - sec_to_ns(batch_sample_time)
-    _log.info("Batch Start Computed Timestamp: %ss", batch_ts_start / 1e9)
     # get item from queue line by line and append a uniform timestamp equal to a predefined sample rate
-    for i in range(TransferInfo.BATCH_SIZE):
+    for _ in range(TransferInfo.BATCH_SIZE):
         ws = q.get(block=True)
-        wlp = f"{ws} {int((batch_ts_start + sec_to_ns(i * sample_spacing))/1000)}"
+        wlp = f"{ws} {int(stream_start_ts + (index * TransferInfo.SAMPLE_SPACING)*1e6)}"
+        index += 1
         buffer.append(wlp)
-    _log.info("Obtained samples: %s", len(buffer))
     wstart = time.perf_counter_ns()
     with client.write_api(write_options=wo) as wc:
         wc.write(

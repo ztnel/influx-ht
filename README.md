@@ -30,5 +30,13 @@ To teardown the services and resources:
 docker-compose down --rmi all
 ```
 
+## Hints
+Purging the influx bucket
+```bash
+influx delete --org demo --token random-token --bucket telemetry \
+  --start '1970-01-01T00:00:00Z' \
+  --stop $(date +"%Y-%m-%dT%H:%M:%SZ")
+```
+
 ## License
 This project is licensed under the terms of the [MIT License](LICENSE)

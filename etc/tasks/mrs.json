@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "version": "1",
+    "type": "task",
+    "name": "MRS-Template",
+    "description": "template created from task: MRS"
+  },
+  "content": {
+    "data": {
+      "type": "task",
+      "attributes": {
+        "status": "active",
+        "name": "MRS",
+        "flux": "option task = {name: \"MRS\", every: 5s}\n\nfrom(bucket: \"telemetry\")\n    |> range(start: -task.every)\n    |> filter(fn: (r) => r[\"_measurement\"] == \"test\")\n    |> filter(fn: (r) => r[\"_field\"] == \"c\" or r[\"_field\"] == \"v\")\n    |> pivot(rowKey: [\"_time\"], columnKey: [\"_measurement\", \"_field\"], valueColumn: \"_value\")\n    |> map(fn: (r) => ({_time: r._time, _field: \"mrs\", _value: if r.c < 0 then r.v else 0.0}))\n    |> to(bucket: \"telemetry\", org: \"demo\")",
+        "every": "5s"
+      },
+      "relationships": {
+        "label": {
+          "data": []
+        }
+      }
+    },
+    "included": []
+  },
+  "labels": []
+}

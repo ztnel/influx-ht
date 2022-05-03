@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "version": "1",
+    "type": "task",
+    "name": "Capacity-Template",
+    "description": "template created from task: Capacity"
+  },
+  "content": {
+    "data": {
+      "type": "task",
+      "attributes": {
+        "status": "active",
+        "name": "Capacity",
+        "flux": "option task = {name: \"Capacity\", every: 5s}\n\nfrom(bucket: \"telemetry\")\n    |> range(start: -task.every)\n    |> filter(fn: (r) => r[\"_measurement\"] == \"test\" and r[\"_field\"] == \"c\")\n    |> cumulativeSum(columns: [\"_value\"])\n    |> to(bucket: \"telemetry\", org: \"demo\", fieldFn: (r) => ({\"capacity\": r[\"_value\"]}))",
+        "every": "5s"
+      },
+      "relationships": {
+        "label": {
+          "data": []
+        }
+      }
+    },
+    "included": []
+  },
+  "labels": []
+}
